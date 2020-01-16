@@ -1,0 +1,162 @@
+<table width="100%" border="0" >
+                      <tbody>
+                        <tr>
+                          <td class="menu">Registruotis ir išsiųsti siuntinį</td>
+                          
+                        </tr>
+                        <tr>
+                          <td class="menu_text" style="background-color: #FFEF00;"><form action="registruoti_su_siuntiniu/" method="POST"><table width="100%" border="0" class="menu_text" style="background-color: #FFEF00;">
+						  {% csrf_token %}  
+                      <tbody>
+						  <tr><td><td></td></td></tr>
+                       <tr style="text-align: right">
+                       <td style="width: 50%; font-weight:bold; color: #B21512">Apytikslūs išmatavimai:</td>
+                       	<td></td>
+                       </tr>
+                        <tr>
+                          <td class="menu_text" align="right" style="border-radius: 25px;">Svoris (kg, pvz. 12.5):</td>
+                          <td>{{form.siuntinio_svoris}}</td>
+                        </tr>
+                        <tr>
+                          <td class="menu_text" align="right" style="border-radius: 25px;">Ilgis (m, pvz. 1.2):</td>
+                          <td>{{form.siuntinio_ilgis}}</td>
+                        </tr>
+                        <tr>
+                          <td class="menu_text" align="right" style="border-radius: 25px;">Plotis (m, pvz. 0.5):</td>
+                          <td>{{form.siuntinio_plotis}}</td>
+                        </tr>
+                        <tr>
+                          <td class="menu_text" align="right" style="border-radius: 25px;">Aukštis (m, pvz. 1.0):</td>
+                          <td>{{form.siuntinio_aukstis}}</td>
+						  </tr>
+						  <tr><td><td></td></td></tr>
+                        <tr style="text-align: right">
+                        
+							<td style="width: 50%; font-weight:bold; color: #B21512">Surinkimo duomenys:</td>
+                        	<td></td>
+                        </tr>
+                        
+                        <tr>
+                        	<td class="menu_text" align="right" style="border-radius: 25px;">Surinkimo šalis/miestas:</td>
+                        	<td>{{form.siuntinio_vieta}}
+							</td>
+                        </tr>
+                        <tr>
+                        	<td class="menu_text" align="right" style="border-radius: 25px;">Namo numeris/pavadinimas:</td>
+                        	<td>{{form.siuntinio_vietos_namas}}
+							</td>
+                        </tr>
+                        <tr>
+                        	<td class="menu_text" align="right" style="border-radius: 25px;">Gatvės pavadinimas:</td>
+                        	<td>{{form.siuntinio_vietos_gatve}}
+							</td>
+                        </tr>
+                        <tr>
+                        	<td class="menu_text" align="right" style="border-radius: 25px;">Pašto kodas:</td>
+                        	<td>{{form.siuntinio_vietos_pastokodas}}
+							</td>
+                        </tr>
+                        <tr><td><td></td></td></tr>
+                        <tr style="text-align: right">
+                       <td style="width: 50%; font-weight:bold; color: #B21512">Pristatymo duomenys:</td>
+                       	<td></td>
+                       </tr>
+                        <tr>
+                        	<td class="menu_text" align="right" style="border-radius: 25px;">Pristatymo šalis/miestas:</td>
+                        	<td>{{form.siuntinio_tikslas}}
+							</td>
+                        </tr>
+                        <tr>
+                        	<td class="menu_text" align="right" style="border-radius: 25px;">Namo numeris/pavadinimas:</td>
+                        	<td>{{form.siuntinio_tikslo_namas}}
+							</td>
+                        </tr>
+                        <tr>
+                        	<td class="menu_text" align="right" style="border-radius: 25px;">Gatvės pavadinimas:</td>
+                        	<td>{{form.siuntinio_tikslo_gatve}}
+							</td>
+                        </tr>
+                        <tr>
+                        	<td class="menu_text" align="right" style="border-radius: 25px;">Pašto kodas:</td>
+                        	<td>{{form.siuntinio_tikslo_pastokodas}}
+							</td>
+                        </tr>
+                        <tr><td><td></td></td></tr>
+                        <tr style="text-align: right">
+                        
+							<td style="width: 50%; font-weight:bold; color: #B21512">Kita informacija:</td>
+                        	<td></td>
+                        </tr>
+                        
+                        <tr>
+                        	<td class="menu_text" align="right" style="border-radius: 25px;">Siuntinio apibūdinimas:</td>
+                        	<td>{{form.siuntinio_apibudinimas}}
+							</td>
+                        </tr>
+                        
+                        <tr>
+                        	<td class="menu_text" align="right" style="border-radius: 25px;">Gavėjo telefono numeris:</td>
+                        	<td>{{form.gavejo_telefonas}}
+							</td>
+                        </tr>
+                        
+                        
+                        
+                        
+                        
+                        <tr><td></td>
+						<td></td>
+                        </tr>
+                        
+						</tbody>
+						</table>
+						
+						
+						<tr><td>
+						<table width="100%" border="0" class="menu_text" style="background-color: #FFEF00;">
+						<tbody>
+						 <tr style="text-align: right">
+                       <td style="width: 50%; font-weight:bold; color: #B21512">Registruoti naują siuntėją:</td>
+                       	<td></td>
+                       </tr>
+						
+						<tr>
+                          <td class="menu_text" align="right" style="border-radius: 25px;">Vardas:</td>
+                          <td>{{form_reg_send.siuntejo_vardas}}</td>
+                        </tr>
+						<tr>
+                          <td class="menu_text" align="right" style="border-radius: 25px;">Pavardė:</td>
+                          <td>{{form_reg_send.siuntejo_pavarde}}</td>
+                        </tr>
+						<tr>
+                          <td class="menu_text" align="right" style="border-radius: 25px;">Telefono numeris:</td>
+                          <td>{{form_reg_send.siuntejo_telefonas}}</td>
+                        </tr>
+						
+						
+						<tr>
+                          <td class="menu_text" align="right" style="border-radius: 25px;">El.paštas:</td>
+                          <td>{{form_reg_send.siuntejo_elpastas}}</td>
+                        </tr>
+						<tr>
+                          <td class="menu_text" align="right" style="border-radius: 25px;">Slaptažodis:</td>
+                          <td>{{form_reg_send.siuntejo_slaptazodis}}</td>
+                        </tr>
+						
+						<tr><td></td></tr>
+						
+						
+                        
+                         <tr>
+                          <td></td>
+                          <td align=right><button type="submit" name="submit" class="button_redaguoti" value="registruoti_ir_siusti">Registruoti ir siųsti siuntinį</button></td>
+						  
+                        </tr>
+                      </tbody>
+                    </table></form></td>
+						
+                          
+                        </tr>
+						</tr></td>
+                      </tbody>
+                    </table>

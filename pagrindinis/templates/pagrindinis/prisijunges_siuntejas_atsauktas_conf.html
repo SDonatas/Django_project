@@ -1,0 +1,72 @@
+<table width="100%" border="0" class="menu_text">
+                      <tbody>
+                        <tr>
+                          <td class="menu">Redaguoti siuntinį</td>
+                          
+                        </tr>
+						
+						
+						
+						<tr><td class="menu_text" style="padding: 10px; background-color: #FFEF00">
+						<table style="border-radius: 10px; cellspacing:10"><tbody><tr><td>
+
+						Siuntinys ID numeriu 
+								{% for x in siuntiniai_data %}
+								<a style="font-weight:bold">{{ x.0 }}</a>
+								{% endfor %}
+								 buvo sekmingai atšauktas.
+								<br>
+								<br>
+								<a style="font-weight:bold">Kas toliau?</a> Vežėjas (jeigu jau priskirtas) bus informuotas apie pokyčius.
+								<br><br>
+								Norėdami sužinoti esamą siuntinio būklę eikite į "mano siuntiniai" skiltį.
+								<br>
+								</td></tr></tbody></table>
+								
+								
+								
+								
+								</td></tr>
+						
+						
+						
+                        <tr>
+                          <td class="menu_text" style="background-color: #FFEF00">
+                          	<table width="100%" border="1" cellspacing="0" style="border-color: white">
+							
+													
+                          		<tr style="font-size: 12px; font-weight: bold; color:#B21512">
+                          			<td align="center">ID</td>
+                          			<td align="center">Apibūdinimas</td>
+                          			<td align="center">Vežėjas</td>
+                          			<td align="center">Kontaktai</td>
+                          			<td align="center">Surinkimo data</td>
+                          			<td align="center">Pristatymo data</td>
+                          		</tr>
+                          		
+                          		{% for x in siuntiniai_data %}
+                          		<tr>
+                          		{% for y in x %}
+                          		<td align="center">{% if y is None %}
+                          		
+                          		<a style="color:#B21512; font-weight: Bold">atšauktas</a>
+                         		  {% else %}
+                          		  {{y}}
+                          		
+                          		{% endif %}
+								</td>
+                         		
+                          		{% endfor %}
+								</tr>
+                          		{% endfor %}
+                          	
+                          	</table>
+                          	
+                          	
+                          	
+                          </td>
+						
+                          
+                        </tr>
+                      </tbody>
+                    </table>

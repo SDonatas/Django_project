@@ -1,0 +1,62 @@
+               <table width="100%" border="0" class="menu_text" style="vertical-align: top">
+                <tbody>
+                  <tr>
+                    <td class="menu">Prisijungimas</td>
+                  </tr>
+                  <tr>
+                  	<td style="font-size: 12px; font-weight:Bold">
+                  		Prisijungimo vardas:
+                  	</td>
+                  </tr>
+                  
+                  <tr>
+					  <td><form action="vartotojo_prisijungimas/" method="POST">
+                 {% csrf_token %} 
+                 {{form_siunt_login.siuntejo_prisijungimo_vardas}}</td>
+                  </tr>
+                  <tr>
+                    <td style="font-size: 12px; font-weight:Bold">Slaptažodis</td>
+                  </tr>
+                  <tr>
+                    <td>{{form_siunt_login.siuntejo_slaptazodis}}</td>
+                  </tr>
+                  <tr>
+					  <td><input type="submit" class="submit_button" value="Prisijungti"></form></td>
+                  </tr>
+                  
+                  <tr>
+                    <td>
+                    
+                    <table>
+                    	<tbody>
+                    		<tr>
+                    			<td style="width: 70px"><hr></td>
+                    			<td style="font-size:12px">arba</td>
+                    			<td style="width: 70px"><hr></td>
+                    		</tr>
+                    		
+                    		
+                    	</tbody>
+                    	
+                    	
+                    </table>
+                    
+                    
+                    
+                    
+                    </td>
+                  </tr>
+                  <tr>
+					  <td style="text-align: center"><a href="registracija_main/" style="font-size:12px">Registruoti naują vartotoją</a></td>
+                  </tr>
+                  <tr>
+                  	<td></td>
+                  </tr>
+                   <tr>
+                    <td><hr></td>
+                  </tr>
+                  <tr style="text-align: center">
+                  	<td style="font-size: 12px; font-weight:Bold; color:red">{{pastaba}}</td>
+                  </tr>
+                </tbody>
+					  </table>

@@ -1,0 +1,100 @@
+<table width="100%" border="0">
+                      <tbody>
+                        <tr>
+                          <td class="menu_hd">MANO SIUNTINIŲ KREPŠELIS</td>
+                          
+                        </tr>
+                        <form method="POST" action="siuntiniu_krepselis/">
+                          		{% csrf_token %}
+                        <tr>
+                        	<td class="menu_text" style="background-color: #B21512; color:white;">
+                        		<table align="right">
+                          		<tr>
+                          			<td style="text-align: right;">Perkelti siuntinius į surinkimo/vežimo stadiją <br>(visi siuntėjai bus iškarto imformuoti): </td>
+                          			<td>
+                          			<button type="submit" name="submit" class="button" value="visus_vezimas">Visus siuntinius</button>
+									</td><td>
+                          				<button type="submit" name="submit" class="button" value="tik_pazymetus_vezimas">Tik pažymėtus siuntinius</button>
+                          				
+                          			</td>
+                          			
+                          		</tr>
+								
+                         	
+                          	</table>
+                        		
+                        		
+                        	</td>
+                        	
+                        </tr>
+                         
+                         
+                         
+                         <tr>
+                          <td class="menu_text" style="background-color: #FFFF00;">
+                          
+                          	<table width="100%" border="1" cellspacing="0" style="border-color:#147FCC">
+                          	
+                          		
+                          		<tr style="font-size: 12px; font-weight: bold" class="menu_text_left">
+                          			<td align="center">ID</td>
+                          			<td align="center">Apibūdinimas</td>
+                          			<td align="center">Išmatavimai</td>
+                          			<td align="center">Svoris</td>
+                          			<td align="center">Surinkimo vieta</td>
+                          			<td align="center">Surinkimo adresas</td>
+                          			
+                          			<td align="center">Pristatymo vieta</td>
+                          			<td align="center">Pristatymo adresas</td>
+                          			
+                          			<td align="center">Kontaktai</td>
+                          			<td align="center">Pažymėti visus</td>
+                          			
+                          		</tr>
+                          		
+                          		
+                          		{% for x in siuntiniu_uzklausos %}
+                          		<tr >
+                          		{% for y in x %}
+                          		<td align="center">{% if y is None %}
+                          		
+                          		-
+                          			{% elif y == "redaguoti" %}
+									<a href="keisti/{{x.0}}">Keisti</a><a> / </a><a href="keisti/">pašalinti</a>
+                        		  	{% elif y == "atsaukti" %}
+									<a href="atsaukti/{{x.0}}">Atšaukti</a>
+                        		  	{% elif y == "forma" %}
+									<table><tr><td><input type="checkbox" name="ID{{x.0}}" value=True></tr></td></table>
+                         		  {% else %}
+                          		  {{y}}
+                          		
+                          		{% endif %}
+								</td>
+                         		
+                          		{% endfor %}
+								</tr>
+                          		{% endfor %}
+                          		
+                         	
+                          	</table>
+                          	
+                          	
+                          	<table align="right">
+                          		<tr>
+                          			<td>
+                          				<button type="submit" name="submit" class="button" value="atsaukti">Atšaukti pažymėtus siuntinius</button>
+                          				
+                          			</td>
+                          			
+                          		</tr>
+								
+                          	</table>
+                          	
+                          	</form>
+                          	
+                          </td>
+						
+                          
+                        </tr>
+                      </tbody>
+                    </table>

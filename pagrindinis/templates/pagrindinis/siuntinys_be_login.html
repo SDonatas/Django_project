@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>SI_HTML</title>
+<style type="text/css">
+.menu {
+	align-content: center;
+	align-self: center;
+	text-align: center;
+	background-color: #B21512;
+	font-family: calibri;
+	color: white;
+	font-weight: bold;
+	font-size: 18px;
+}
+.menu_hd {
+	font-family: Trebuchet MS;
+	font-weight: bold;
+	background: #096BB2;
+	color: white;
+	text-align: center;
+}
+.map_main {
+	align-self: center;
+	align-items: center;
+	align-content: center;
+}
+.menu_text {
+	font-family: Trebuchet MS;
+	font-size: 14px;
+}
+.menu_text_left {
+	background-color: #147FCC;
+	color: white;
+	text-align: right;
+	width: 180px;
+	font-family: Trebuchet MS;
+}
+.siuntinio_duomenys {
+	width: 98%;
+	font-weight: bold;
+	font-family: Trebuchet MS;
+	font-size: 14px;
+}
+.submit_button {
+	width: 100%;
+}
+</style>
+</head>
+
+<body>
+<table width="100%" border="0">
+  <tbody>
+    <tr>    </tr>
+  </tbody>
+</table>
+{% load static %}
+<img src="{% static "pagrindinis/logo.png" %}" width="315" height="116" alt=""/>
+<table width="100%" border="0">
+  <tbody>
+    <tr>
+      <td><header class="menu">Pagrindinis - Vežėjams - Išsiųsti siuntinį - Susisiekti</header>
+		  <br></br>
+        <table width="100%" border="0">
+          <tbody>
+            <tr>
+              <td width="15%">&nbsp;</td>
+              <td width="70%"><table width="100%" border="0">
+                <tbody>
+                <tr>
+                 <td><table width="100%" border="0">
+                 
+                 <tbody>
+                        <tr>
+                          <td class="menu_hd" width="100%">SIUNTINIO INFORMACIJA</td>
+                          
+                        </tr>
+					 </tbody>
+                 
+                 
+					 </table></td></tr>
+                  <tr>
+                    <td><table width="100%" border="0">
+                      <tbody>
+                        <tr>
+                          <td class="menu_hd" width="50%">IŠSIŲSTI SIUNTINĮ</td>
+                          <td class="menu_hd" width="50%">PRISIJUNGIMAS</td>
+                        </tr>
+                        <tr>
+                          <td><form action="/Siunt_ne_reg/"><table width="100%" border="0" class="menu_text" style="background-color: #FFFF00;">
+						  {% csrf_token %}  
+                      <tbody>
+                        <tr>
+                          <td class="menu_text_left">Svoris (kg, pvz. 12,5):</td>
+                          <td>{{form.siuntinio_svoris}}</td>
+                        </tr>
+                        <tr>
+                          <td class="menu_text_left">Ilgis (cm, pvz. 250):</td>
+                          <td>{{form.siuntinio_ilgis}}</td>
+                        </tr>
+                        <tr>
+                          <td class="menu_text_left">Plotis (cm, pvz. 100):</td>
+                          <td>{{form.siuntinio_plotis}}</td>
+                        </tr>
+                        <tr>
+                          <td class="menu_text_left">Aukštis (cm, pvz. 50):</td>
+                          <td>{{form.siuntinio_aukstis}}</td>
+                        </tr>
+                        <tr>
+                        	<td class="menu_text_left">Surinkimo šalis/miestas:</td>
+                        	<td>{{form.siuntinio_vieta}}
+							</td>
+                        </tr>
+                        <tr>
+                        	<td class="menu_text_left">Pristatymo šalis/miestas:</td>
+                        	<td>{{form.siuntinio_tikslas}}
+							</td>
+                        </tr>
+                        
+                        
+						
+                         <tr>
+                          <td>&nbsp;</td>
+                          <td><input type="submit" class="submit_button" value="Sekantis"></td>
+                        </tr>
+                      </tbody>
+                    </table></form></td>
+						
+                          <td align="center" valign="top">&nbsp;</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                      </td>
+                  </tr>
+                  <tr>
+                    <td class="menu_text"></td>
+                  
+                  </tr>
+					<tr>
+						<td><br></br></td>
+					</tr>
+                  <tr>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                  </tr>
+                </tbody>
+              </table></td>
+              <td width="15%">&nbsp;</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </td>
+    </tr>
+    <tr></tr>
+  </tbody>
+</table>
+</body>
+</html>

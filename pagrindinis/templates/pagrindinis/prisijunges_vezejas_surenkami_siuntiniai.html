@@ -1,0 +1,266 @@
+<table width="100%" border="0">
+                      <tbody>
+                        <tr>
+                          <td class="menu">Surenkami/vežami siuntiniai</td>
+                          
+                        </tr>
+                        
+                        
+                        <form method="POST" action="siuntiniai_kelyje/">
+                          		{% csrf_token %}
+                        <tr>
+                        	<td class="menu_text" style="background-color: #FFEF00; color:white;">
+                        		<table style="width: 100%">
+                          		
+                         		<tr><td>
+                         			<table align="center"><tbody><tr><td>
+                          			<button type="submit" name="submit" class="button" value="visi_pristatyti">Visus pažymėti kaip pristatytus</button>
+										</td>
+                         				<td>
+                          				<button type="submit" name="submit" class="button" value="tik_pazymeti_pristatyti">Tik pažymėtus žymėti kaip pristatytus</button>
+											</td>
+                         				<td>
+                         					<button type="submit" name="submit" class="button" value="atsaukti">Grąžinti pažymėtus į krepšelį</button>
+                         					
+                         					
+                         				</td>
+                         			
+                         			</tr></tbody></table>
+                          			</td>
+                          			
+                          		</tr>
+								
+                         	
+                          	</table>
+                        		
+                        		
+                        	</td>
+                        	
+                        </tr>
+                         
+								<tr>
+								<td>
+							<table align="center" class="menu_text" width="100%">
+<tbody>
+<tr style="font-size: 12px">
+
+<td align="center">
+
+<a>Rūšiuoti pagal: </a>
+<a href="siuntiniai_kelyje/rusiuoti_pagal_surinkimo_duomenis/" {% if sort_type == 0 %}
+ style="font-weight:Bold"
+{% endif %}
+>surinkimo šalį/miestą/pašto kodą</a><a> arba </a>
+<a href="siuntiniai_kelyje/rusiuoti_pagal_pristatymo_duomenis/"
+{% if sort_type == 1 %}
+ style="font-weight:Bold"
+{% endif %}
+
+>pristatymo šalį/miestą/pašto kodą</a>
+</td>
+
+
+
+
+
+
+
+</tr>
+
+
+
+
+
+</tbody>							
+							
+							
+							
+							</table>								
+								
+								
+								
+								</td>								
+								
+								
+								</tr>                         
+               
+             
+<tr><td align=center class="menu_text">
+{% if not not siuntiniu_uzklausos or zemelapis_appendix != "" %}
+<iframe
+width="{{width_center}}"
+height="400"
+frameborder="1" style="border:1; border-style:solid; border-color: #FFEF00"
+src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyCeABZRbOhf7cEq2ZzYr0flo3zGIiBepzs
+{{zemelapis_appendix}}">
+</iframe>
+{% else %}
+<br>
+Surenkamų siuntinių nėra.
+Norėdami gauti išsamų surinkimo ar pristatymo sąrašą kartu su žemėlapio nuorodomis, perkelkite siuntinius iš krepšelio į surinkimo stadiją.
+<br><br>Atlikus šį veiksmą taip pat bus informuoti siuntėjai apie surinkimo pradžią.
+{% endif %}
+        </td></tr>     
+
+
+
+<tr>
+<td>
+	{% if not not siuntiniu_uzklausos or zemelapis_appendix != "" %}
+<br>
+{% endif %}
+</td>
+
+</tr> 		
+               
+{% for key, value in siuntiniu_uzklausos.items %}                        
+                         
+                         <tr>
+<td class="menu_text">{{key}}</td>                         
+                         </tr>
+                         
+                         
+                         
+                         
+                         <tr>
+                          <td class="menu_text" style="background-color: #FFEF00;">
+                          
+                          	<table width="100%" border="1" cellspacing="0" style="border-color: white">
+                          	
+                          		
+                          		<tr style="font-size: 12px; font-weight: bold; color: #B21512" class="menu_text">
+                          			<td align="center">ID</td>
+                          			<td align="center">Apibūdinimas</td>
+                          			<td align="center">Išmatavimai</td>
+                          			<td align="center">Svoris</td>
+                          			<td align="center">Surinkimo vieta</td>
+                          			<td align="center">Surinkimo adresas</td>
+                          			
+                          			<td align="center">Pristatymo vieta</td>
+                          			<td align="center">Pristatymo adresas</td>
+                          			
+                          			<td align="center">Kontaktai</td>
+                          			<td align="center">Pažymėti</td>
+                          			
+                          		</tr>
+                          		
+                          		
+                          		{% for x in value %}
+                          		<tr>
+                          		{% for y in x %}
+                          		<td align="center">{% if y is None %}
+                          		
+                          		-
+                          			{% elif y == "redaguoti" %}
+									<a href="keisti/{{x.0}}">Keisti</a><a> / </a><a href="keisti/">pašalinti</a>
+                        		  	{% elif y == "atsaukti" %}
+									<a href="atsaukti/{{x.0}}">Atšaukti</a>
+                        		  	{% elif y == "forma" %}
+									<table><tr><td><input type="checkbox" name="ID{{x.0}}" value=True></tr></td></table>
+                         		  {% else %}
+                          		  {{y}}
+                          		
+                          		{% endif %}
+								</td>
+                         		
+                          		{% endfor %}
+								</tr>
+                          		{% endfor %}
+                          		
+                         	
+                          	</table>
+                          	
+                          	{% endfor %}
+                          	
+                          	
+                          	</form>
+                          	
+                          </td>
+						
+                          
+                        </tr>
+						
+						
+						<tr>
+                        	<td>
+                        		<table align=center class="menu_text" style="font-size: 16px;" width="100%">
+                          		<tbody>
+                          			<tr><br></tr>
+                          			<tr align=center>
+										<td style="color:#B21512"> 
+											<a>Rezultatų puslapiai: </a>
+                         					<a class="hcol" href=?page={{page_layout.0}} {% if page_layout.0 == page|add:"+1" %}
+											style="font-weight: bold; text-decoration: none"
+											{% else %}
+											style="text-decoration: none"
+											{% endif %}
+											>{{page_layout.0}}</a><a> </a><a class="hcol" href=?page={{page_layout.1}} {% if page_layout.1 == page|add:"+1" %}
+											style="font-weight: bold; text-decoration: none"
+											{% else %}
+											style="text-decoration: none"
+											{% endif %}
+                         					>{{page_layout.1}}
+                         					</a><a> </a><a class="hcol" href=?page={{page_layout.2}}
+											{% if page_layout.2 == page|add:"+1" %}
+											style="font-weight: bold; text-decoration: none"
+											{% else %}
+											style="text-decoration: none"
+											{% endif %}
+											>
+                         					{{page_layout.2}}
+                         					</a><a> </a><a class="hcol" href=?page={{page_layout.3}}
+											{% if page_layout.3 == page|add:"+1" %}
+												style="font-weight: bold; text-decoration: none"
+											{% else %}
+											style="text-decoration: none"
+											{% endif %}
+											>
+                         					{{page_layout.3}}
+                         					</a><a> </a><a class="hcol" href=?page={{page_layout.4}}
+											{% if page_layout.4 == page|add:"+1" %}
+											style="font-weight: bold; text-decoration: none"
+											{% else %}
+											style="text-decoration: none"
+											{% endif %}
+											>
+                         					{{page_layout.4}}
+                         					</a>
+                          					
+                          					
+                          					
+                          					
+                          					
+                          				</td>
+                          				
+                          				
+                          				
+                          				
+                          				
+                          			</tr>
+                          			
+                          			
+                          			
+                          			
+                          		</tbody>
+                          		
+                          		
+                          		
+                          	</table>
+                        		
+                        	</td>
+                        	
+                        </tr>
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+                      </tbody>
+                    </table>

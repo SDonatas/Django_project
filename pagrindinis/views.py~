@@ -1,0 +1,617 @@
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.template import loader
+from .models import Siuntejas, Vezejas, Siuntiniai, Miestai, Salys
+from .forms import NaujasSiuntinys, Prisijungimas_siuntejas, Zymejimas, forms
+from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
+
+
+
+
+
+
+
+# Create your views here.
+#@method_decorator(login_required)
+
+
+
+
+def index(request):
+	if request.user.is_authenticated():
+		if request.user.groups.filter(name='vezejas').exists() == True:
+			return redirect('login_vezejas')
+		else:
+			return redirect('login_siuntejas')
+			
+			#prisijunges_siuntejas_left
+			
+			
+	else:
+		
+		template = loader.get_template('pagrindinis/index.html')
+		form = NaujasSiuntinys()
+		form_siunt_login = Prisijungimas_siuntejas()
+		#dimensions_of_layout
+		width_center = 500
+		width_left = 200
+		width_right = 250
+		
+		
+		
+		left_menu = 'pagrindinis/left_menu.html'
+		vidurys = 'pagrindinis/vidurys_siunt_be_reg.html'
+		right_menu = 'pagrindinis/right_gidas.html'
+		if "just_logged_out" in request.session:
+			if request.session['just_logged_out']=="True":
+				pastaba="Jūs sėkmingai atsijungėte"
+				request.session['just_logged_out']="False"
+			else:
+				pastaba = ""
+		else:
+			pastaba = ""
+		context = {
+		'form': form,
+		'form_siunt_login': form_siunt_login,
+		'left_menu':left_menu,
+		'pastaba':pastaba,
+		'vidurys':vidurys,
+		'right_menu':right_menu,
+		'width_center':width_center,
+		'width_left':width_left,
+		'width_right':width_right
+		}
+		#output = ', '.join([q.siuntejo_vardas + " " + q.siuntejo_pavarde for q in paskiausi_siuntejai])
+		return HttpResponse(template.render(context, request))
+
+@login_required		
+def login_vezejas(request):
+
+	
+	def prep_siuntiniu_uzklausos (number, page=0):
+		
+		def prep_summary_left_menu():
+		
+			left_summary = []
+			left_summary.append("Viso užklausų")
+			left_summary.append(len(Siuntiniai.objects.filter(vezejas__isnull=True).values_list('id')))
+			left_summary.append("Viso siuntinių krepšelyje")
+			filter_args = {}
+			filter_args['vezejas']=request.user.id
+			filter_args['siuntinio_stadija']=0
+			
+			
+			left_summary.append(len(Siuntiniai.objects.filter(**filter_args).values_list('id')))
+			left_summary.append("Svoris")
+			svoris_q = Siuntiniai.objects.filter(**filter_args).values_list("siuntinio_svoris", flat=True)
+			svoris_final = 0.0
+			for matas in svoris_q:
+				svoris_final = svoris_final + float(matas)
+			left_summary.append(svoris_final)
+			del svoris_q, svoris_final
+			left_summary.append("Tūris")
+			turis_q = Siuntiniai.objects.filter(**filter_args).values_list("siuntinio_ilgis", "siuntinio_plotis", "siuntinio_aukstis")
+			turis_final = 0.0
+						
+			for daiktas in turis_q:
+				turis_final = turis_final + (daiktas[0] * daiktas[1] * daiktas[2])	
+			left_summary.append(turis_final)
+			del turis_final, turis_q
+			left_summary.append("Surenkami/vežami siuntiniai")
+			filter_args = {}
+			filter_args['vezejas']=request.user.id
+			filter_args['siuntinio_stadija']=1
+			left_summary.append(len(Siuntiniai.objects.filter(**filter_args).values_list('id')))
+							
+			
+			
+			left_summary.append("Svoris surenkamų siuntinių")
+			svoris_q = Siuntiniai.objects.filter(**filter_args).values_list("siuntinio_svoris", flat=True)
+			svoris_final = 0.0
+			for matas in svoris_q:
+				svoris_final = svoris_final + float(matas)
+			left_summary.append(svoris_final)
+			del svoris_q, svoris_final
+			left_summary.append("Tūris surenkamų")
+			turis_q = Siuntiniai.objects.filter(**filter_args).values_list("siuntinio_ilgis", "siuntinio_plotis", "siuntinio_aukstis")
+			turis_final = 0.0
+						
+			for daiktas in turis_q:
+				turis_final = turis_final + (daiktas[0] * daiktas[1] * daiktas[2])	
+			left_summary.append(turis_final)
+			del turis_final, turis_q, filter_args
+						
+			
+			
+			
+			
+			
+			
+			
+			
+			return left_summary
+		
+		#Fuction to preapre page layout list. Needs to be initiated once maxpages and page number known as inputs
+		def prepare_page_layout(page, maxpages):
+			
+			page_layout = []
+			if page + 1 >= 3:
+				if page + 1 - 2  <= maxpages:
+					page_layout.append(page + 1 - 2)
+				if page + 1 - 1 <= maxpages:
+					page_layout.append(page + 1 - 1)
+				if page + 1 <= maxpages:
+					page_layout.append(page + 1 - 0)
+				if page + 2 <= maxpages:
+					page_layout.append(page + 1 + 1)
+				if page + 3 <= maxpages:
+					page_layout.append(page + 1 + 2)
+			else:
+				if 1 <= maxpages:
+					page_layout.append(1)
+				if 2 <= maxpages:
+					page_layout.append(2)
+				if 3 <= maxpages:
+					page_layout.append(3)
+				if 4 <= maxpages:
+					page_layout.append(4)
+				if 5 <= maxpages:
+					page_layout.append(5)
+		
+			return page_layout
+		
+		#function to flaten up round up float max pages and modofy page requst if after item removal there is no data. Also query limits for items
+		def maxpage_page_out_of_scope(maxpages, page):
+			
+			if (maxpages % 1) == 0:
+				maxpages = maxpages
+			else:
+				maxpages = maxpages - (maxpages % 1) + 1
+			if (page + 1) > maxpages:
+				page = maxpages - 1
+			lenx = 10 * page
+			lenx2 = 10 + (10 * page)
+		
+			return maxpages, page, lenx, lenx2
+		
+		#prepare summary left short info as it will be used as output as well as for following operations. this will save varaible space
+		summary_left = prep_summary_left_menu()
+		
+		if number == 0:
+			#maxpages = len(Siuntiniai.objects.filter(vezejas__isnull=True).values_list('id')) / 10
+			maxpages = summary_left[1] / 10
+			if maxpages > 0:
+				maxpages, page, lenx, lenx2 = maxpage_page_out_of_scope(maxpages, page)			
+				siuntiniu_uzklausos = Siuntiniai.objects.filter(vezejas__isnull=True).values_list('id', 'siuntinio_apibudinimas', 'siuntinio_plotis', 'siuntinio_aukstis', 'siuntinio_ilgis', 'siuntinio_svoris', 'siuntinio_vietos_miestas', 'siuntinio_vietos_namas', 'siuntinio_vietos_gatve', 'siuntinio_vietos_pastokodas', 'siuntinio_tikslo_miestas', 'siuntinio_tikslo_namas', 'siuntinio_tikslo_gatve', 'siuntinio_tikslo_pastokodas', 'gavejo_telefonas', 'siuntejas')[lenx:lenx2]
+				siuntiniu_uzklausos = list(siuntiniu_uzklausos)
+				siuntiniu_uzklausos = [list(elem) for elem in siuntiniu_uzklausos]
+				page_layout = prepare_page_layout(page, maxpages)
+			else:
+				page=0
+				siuntiniu_uzklausos = []
+				page_layout = prepare_page_layout(0, 1)
+	
+		elif number == 1:
+			#maxpages = len(Siuntiniai.objects.filter(vezejas=request.user.id).values_list('id')) / 10
+			maxpages = summary_left[3] / 10
+			if maxpages > 0:
+				maxpages, page, lenx, lenx2 = maxpage_page_out_of_scope(maxpages, page)
+				filter_args = {}
+				filter_args['vezejas']=request.user.id
+				filter_args['siuntinio_stadija']=0
+				siuntiniu_uzklausos = Siuntiniai.objects.filter(**filter_args).values_list('id', 'siuntinio_apibudinimas', 'siuntinio_plotis', 'siuntinio_aukstis', 'siuntinio_ilgis', 'siuntinio_svoris', 'siuntinio_vietos_miestas', 'siuntinio_vietos_namas', 'siuntinio_vietos_gatve', 'siuntinio_vietos_pastokodas', 'siuntinio_tikslo_miestas', 'siuntinio_tikslo_namas', 'siuntinio_tikslo_gatve', 'siuntinio_tikslo_pastokodas', 'gavejo_telefonas', 'siuntejas')[lenx:lenx2]
+				del filter_args				
+				siuntiniu_uzklausos = list(siuntiniu_uzklausos)
+				siuntiniu_uzklausos = [list(elem) for elem in siuntiniu_uzklausos]
+				page_layout = prepare_page_layout(page, maxpages)
+			else:
+				page=0
+				siuntiniu_uzklausos = []
+				page_layout = prepare_page_layout(0, 1)
+				
+		elif number == 2:
+			maxpages = summary_left[9] / 10
+			if maxpages > 0:
+				maxpages, page, lenx, lenx2 = maxpage_page_out_of_scope(maxpages, page)
+				filter_args = {}
+				filter_args['vezejas']=request.user.id
+				filter_args['siuntinio_stadija']=1
+				siuntiniu_uzklausos = Siuntiniai.objects.filter(**filter_args).values_list('id', 'siuntinio_apibudinimas', 'siuntinio_plotis', 'siuntinio_aukstis', 'siuntinio_ilgis', 'siuntinio_svoris', 'siuntinio_vietos_miestas', 'siuntinio_vietos_namas', 'siuntinio_vietos_gatve', 'siuntinio_vietos_pastokodas', 'siuntinio_tikslo_miestas', 'siuntinio_tikslo_namas', 'siuntinio_tikslo_gatve', 'siuntinio_tikslo_pastokodas', 'gavejo_telefonas', 'siuntejas')[lenx:lenx2]
+				del filter_args				
+				siuntiniu_uzklausos = list(siuntiniu_uzklausos)
+				siuntiniu_uzklausos = [list(elem) for elem in siuntiniu_uzklausos]
+				page_layout = prepare_page_layout(page, maxpages)
+				
+#				def rusiuoti_pagal_surinkimo_miesta(siuntiniu_uzklausos):				
+#					final_sorted_dic = {}
+#					# 4th
+#					miestai_list=[]					
+#					
+#					for x in siuntiniu_uzklausos:
+#						miestai_list.append(x[4])
+#					
+#					miestai_list = list(set(miestai_list))
+#					miestai_list = sorted(miestai_list)					
+#					for x in miestai_list:
+#						for y in siuntiniu_uzklausos:
+#							if x==y[4]:
+#								final_sorted_dic[x].append(y)
+#					
+#					#need to add postcode feed into main query and sort
+#					for key, value in final_sorted_dic.items():
+#						final_sorted_dic = sorted(value, key=lambda x: (x[7]), reverse=False)
+#					
+#					return final_sorted_dic
+#				
+#				final_sorted_dic = rusiuoti_pagal_surinkimo_miesta(siuntiniu_uzklausos)				
+				siuntiniu_uzklausos = sorted(siuntiniu_uzklausos, key=lambda x: (x[:][4] ,x[:][7]))
+				
+				
+				
+			else:
+				page=0
+				siuntiniu_uzklausos = []
+				page_layout = prepare_page_layout(0, 1)
+							
+				
+				
+			
+		for index, elem in enumerate(siuntiniu_uzklausos):
+			#"Sorting values for ismatavimai and deleting unneeded values
+			siuntinio_ismatavimai = float(elem[2]) * float(elem[3]) * float(elem[4])
+			siuntinio_ismatavimai = "{0:.1f}".format(siuntinio_ismatavimai) + "m3"
+			siuntinio_ismatavimai_str = str(elem[2])+"x"+str(elem[3])+"x"+str(elem[4])
+			del siuntiniu_uzklausos[index][2]
+			del siuntiniu_uzklausos[index][2]
+			del siuntiniu_uzklausos[index][2]
+			siuntiniu_uzklausos[index].insert(2, str(siuntinio_ismatavimai)+" ("+siuntinio_ismatavimai_str+")")
+			
+			#sorting values for destination city and location city
+			siuntiniu_uzklausos[index][4] = Miestai.objects.filter(id=siuntiniu_uzklausos[index][4]).values_list('salis_miestas', flat=True)[0]
+			siuntiniu_uzklausos[index][8] = Miestai.objects.filter(id=siuntiniu_uzklausos[index][8]).values_list('salis_miestas', flat=True)[0]
+			siuntiniu_uzklausos[index][5] = str(siuntiniu_uzklausos[index][5]) + ", " + str(siuntiniu_uzklausos[index][6])+ ", " + str(siuntiniu_uzklausos[index][7])
+			del siuntiniu_uzklausos[index][6]
+			del siuntiniu_uzklausos[index][6]
+			siuntiniu_uzklausos[index][7] = str(siuntiniu_uzklausos[index][7]) + ", " + str(siuntiniu_uzklausos[index][8])+ ", " + str(siuntiniu_uzklausos[index][9])
+			del siuntiniu_uzklausos[index][8]
+			del siuntiniu_uzklausos[index][8]
+			siuntiniu_uzklausos[index][8] = "Gavėjas: " + str(siuntiniu_uzklausos[index][8]) + ", Siuntėjas: " + str(Siuntejas.objects.filter(siuntejas_user=siuntiniu_uzklausos[index][9]).values_list('siuntejo_telefonas', flat=True)[0])
+			del siuntiniu_uzklausos[index][9]
+			
+			siuntiniu_uzklausos[index].insert(9, "forma")
+		
+		return siuntiniu_uzklausos, page_layout, page, summary_left
+	
+	
+	if request.user.groups.filter(name='vezejas').exists() == True:
+	
+		#Getting page number
+		
+		if "page" in request.GET.keys():
+			page = int(request.GET.get('page')) - 1
+			request.session['page_requested'] = request.GET.get('page')
+		elif 'page_requested' in request.session:
+			page = int(request.session['page_requested']) - 1
+#			del request.session['page_requested']	
+		else:
+			page = 0
+		
+		#get back one page in relation to requested if page is empty after removal of items
+		
+		
+		
+		
+		
+
+		if 'menu_requested' in request.session:
+			if request.session['menu_requested']=="siuntiniu_krepselis":
+				vidurys = 'pagrindinis/prisijunges_vezejas_siuntiniu_krepselis.html'
+				#del request.session['menu_requested']				
+				siuntiniu_uzklausos, page_layout, page, summary_left = prep_siuntiniu_uzklausos(1, page)
+			
+			elif request.session['menu_requested']=="siuntiniu_uzklausos":
+				vidurys = 'pagrindinis/prisijunges_vezejas_siuntiniu_uzklausos.html'
+				#del request.session['menu_requested']
+				siuntiniu_uzklausos, page_layout, page, summary_left = prep_siuntiniu_uzklausos(0, page)
+			elif request.session['menu_requested']=="siuntiniai_kelyje":
+				vidurys = 'pagrindinis/prisijunges_vezejas_surenkami_siuntiniai.html'
+				#del request.session['menu_requested']
+				siuntiniu_uzklausos, page_layout, page, summary_left = prep_siuntiniu_uzklausos(2, page)						
+				#translate siuntiniu uzklausos to dictionary, with key country, and value - 2d list
+				siuntiniu_uzklausos_dic = {}				
+				siuntiniu_uzklausos_dic[siuntiniu_uzklausos[0][4]]=siuntiniu_uzklausos[0]				
+				for list_item in siuntiniu_uzklausos:
+					if list_item[4] in siuntiniu_uzklausos_dic.keys():
+						siuntiniu_uzklausos_dic[list_item[4]].append(list_item)
+					else:
+						siuntiniu_uzklausos_dic[list_item[4]].list_item
+						 	 						
+						
+						
+						
+			
+			else:
+				vidurys = 'pagrindinis/prisijunges_vezejas_siuntiniu_uzklausos.html'
+				siuntiniu_uzklausos, page_layout, page, summary_left = prep_siuntiniu_uzklausos(0, page)
+				
+		else:
+			vidurys = 'pagrindinis/prisijunges_vezejas_siuntiniu_uzklausos.html'
+			siuntiniu_uzklausos, page_layout, page, summary_left = prep_siuntiniu_uzklausos(0, page)
+	
+
+		width_center = 700
+		width_left = 200
+		width_right = 250
+		login_full_name = str(request.user.first_name) + " " + str(request.user.last_name)
+		if login_full_name in [None, "", " "]:
+			login_full_name = str(request.user.username)
+		template = loader.get_template('pagrindinis/index.html')
+		left_menu = 'pagrindinis/prisijunges_vezejas_left.html'
+		right_menu = 'pagrindinis/prisijunges_siuntejas_right_gidas_mano_siuntos.html'
+		
+
+		#get back one page in relation to requested if page is empty after removal of items
+		
+		
+		
+		
+		
+		context = {
+		'left_menu':left_menu,
+		'vidurys':vidurys,
+		'right_menu':right_menu,
+		'login_full_name':login_full_name,
+		'siuntiniu_uzklausos':siuntiniu_uzklausos,
+		'width_center':width_center,
+		'width_left':width_left,
+		'width_right':width_right,
+		'page_layout':page_layout,
+		'page':page,
+		'summary_left':summary_left
+		}
+		return HttpResponse(template.render(context, request))
+	
+	else:
+		return redirect('index')
+
+		
+		
+		
+		
+def login_vezejas_siuntiniai_kelyje(request):
+	
+	request.session['menu_requested'] = "siuntiniai_kelyje"
+	if 'page_requested' in request.session:
+			del request.session['page_requested']
+	return redirect('login_vezejas')	
+		
+		
+		
+		
+		
+		
+		
+@login_required		
+def login_vezejas_siuntiniu_krepselis(request):
+	
+	if "submit" in request.POST.keys():
+		if request.POST.get('submit') == "atsaukti":
+			siuntiniu_uzklausos = Siuntiniai.objects.filter(vezejas=request.user.id).values_list('id')
+			siuntiniu_uzklausos = list(siuntiniu_uzklausos)
+			siuntiniu_uzklausos = [list(elem) for elem in siuntiniu_uzklausos]
+			
+			
+			for key in request.POST.keys():
+				#del request.session[key]
+				for index, x in enumerate(siuntiniu_uzklausos):
+					if str(key)=="ID"+str(siuntiniu_uzklausos[index][0]) and request.POST.get(key)=="True":
+						Siuntiniai.objects.filter(id=siuntiniu_uzklausos[index][0]).update(vezejas=None)
+			
+			request.session['menu_requested'] = "siuntiniu_krepselis"
+			return redirect('login_vezejas')
+	
+	
+	
+	else:
+		request.session['menu_requested'] = "siuntiniu_krepselis"
+		if 'page_requested' in request.session:
+			del request.session['page_requested']
+		return redirect('login_vezejas')
+
+	
+@login_required		
+def login_vezejas_siuntiniu_uzklausos(request):
+	
+	if "submit" in request.POST.keys():
+		siuntiniu_uzklausos = Siuntiniai.objects.filter(vezejas__isnull=True).values_list('id')
+		siuntiniu_uzklausos = list(siuntiniu_uzklausos)
+		siuntiniu_uzklausos = [list(elem) for elem in siuntiniu_uzklausos]
+		
+		
+		for key in request.POST.keys():
+			#del request.session[key]
+			for index, x in enumerate(siuntiniu_uzklausos):
+				if str(key)=="ID"+str(siuntiniu_uzklausos[index][0]) and request.POST.get(key)=="True":
+					Siuntiniai.objects.filter(id=siuntiniu_uzklausos[index][0]).update(vezejas=request.user.id)
+			
+		return redirect('login_vezejas')
+	
+	else:
+		request.session['menu_requested'] = "siuntiniu_uzklausos"
+		if 'page_requested' in request.session:
+			del request.session['page_requested']
+		return redirect('login_vezejas')	
+
+
+		
+@login_required
+def login_siuntejas(request):
+
+	def prep_siuntiniai():
+		siuntiniai_data = Siuntiniai.objects.filter(siuntejas=request.user.id).values_list('id', 'siuntinio_apibudinimas', 'vezejas', 'surinkimo_data', 'pristatymo_data')
+		siuntiniai_data = list(siuntiniai_data)
+		siuntiniai_data = [list(elem) for elem in siuntiniai_data]
+		for z, x in enumerate(siuntiniai_data):
+			if x[2] is None:
+				siuntiniai_data[z][2] = "Ieškomas"
+				siuntiniai_data[z].insert(3,"-")
+				siuntiniai_data[z].append("redaguoti")
+			else:
+				temp_vezejas = Vezejas.objects.filter(id=siuntiniai_data[z][2]).values_list('imones_pavadinimas', 'telefono_numeris')[0]
+				siuntiniai_data[z][2] = temp_vezejas[0]
+				siuntiniai_data[z].insert(3, temp_vezejas[1])
+				siuntiniai_data[z].append("atšaukti")
+				
+		return siuntiniai_data
+	
+	#Once again check that user has access to siuntejas group
+	if request.user.groups.filter(name='siuntejas').exists() == True:	
+		
+	
+		if 'menu_requested' in request.session:
+			if request.session['menu_requested']=="mano_siuntiniai":
+				width_center = 700
+				width_left = 200
+				width_right = 250
+				vidurys = 'pagrindinis/prisijunges_siuntejas_mano_siuntiniai.html'
+				siuntiniai_data = prep_siuntiniai()
+				
+			elif request.session['menu_requested']=="issiusti_siuntini":
+				width_center = 500
+				width_left = 200
+				width_right = 250
+				vidurys = 'pagrindinis/vidurys_siunt_be_reg.html'
+				siuntiniai_data = []
+		else:
+			width_center = 700
+			width_left = 200
+			width_right = 250
+			vidurys = 'pagrindinis/prisijunges_siuntejas_mano_siuntiniai.html'
+			siuntiniai_data = prep_siuntiniai()
+			
+		login_full_name = str(request.user.first_name) + " " + str(request.user.last_name)
+		if login_full_name in [None, "", " "]:
+			login_full_name = str(request.user.username)
+		template = loader.get_template('pagrindinis/index.html')
+		form = NaujasSiuntinys()
+		#form_siunt_login = Prisijungimas_siuntejas()
+		left_menu = 'pagrindinis/prisijunges_siuntejas_left.html'
+		right_menu = 'pagrindinis/prisijunges_siuntejas_right_gidas_mano_siuntos.html'
+		#pastaba = ""
+		
+		context = {
+		'form': form,
+		'left_menu':left_menu,
+		'vidurys':vidurys,
+		'right_menu':right_menu,
+		'login_full_name':login_full_name,
+		'siuntiniai_data':siuntiniai_data,
+		'width_center':width_center,
+		'width_left':width_left,
+		'width_right':width_right
+		}
+		return HttpResponse(template.render(context, request))
+	else:
+		return redirect('index')
+
+@login_required
+def login_siuntejas_mano_siuntiniai(request):
+	request.session['menu_requested'] = "mano_siuntiniai"
+	return redirect('login_siuntejas')
+@login_required
+def login_siuntejas_issiusti_siuntini(request):
+	request.session['menu_requested'] = "issiusti_siuntini"
+	return redirect('login_siuntejas')
+
+
+
+	
+@login_required		
+def logout_user(request):
+	logout(request)
+	request.session['just_logged_out'] = "True"
+	return redirect('index')
+		
+		
+		
+		
+def detail(request, siuntejas_id):
+    return HttpResponse("Siuntejas %s." % question_id)
+
+def results(request, vezejas_id):
+    response = "Vezejas %s."
+    return HttpResponse(response % vezejas_id)
+
+def vote(request, siuntiniai_id):
+    return HttpResponse("Siuntiniai %s." % siuntiniai_id)
+	
+	
+def siuntinys_naujas_be_reg(request):
+	# if this is a POST request we need to process the form data
+	if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+		form = NaujasSiuntinys(request.POST)
+        # check whether it's valid:
+		if form.is_valid():
+			# process the data in form.cleaned_data as required
+			# redirect to a new URL:
+			template = loader.get_template('pagrindinis/siuntinys_be_login.html')
+			form2 = NaujasSiuntinys()
+			context = {
+			'form': form2
+			}
+		
+			return HttpResponse(template.render(context, request))
+
+			# return HttpResponseRedirect('/thanks/')
+
+	# if a GET (or any other method) we'll create a blank form
+	else:
+		form = NaujasSiuntinys()
+		return render(request, 'pagrindinis/siuntinys_be_login.html', {'form': form})
+		
+	
+#Authentifikacija - t.y. varotojo prisijungimas pirma karta is pradinio lango
+def vartotojo_prisijungimas(request):
+
+	form_obj = Prisijungimas_siuntejas(request.POST)
+
+	if form_obj.is_valid():
+		username = form_obj.cleaned_data['siuntejo_prisijungimo_vardas']
+		password = form_obj.cleaned_data['siuntejo_slaptazodis']
+		user = authenticate(username=username, password=password)
+		if user is not None:
+			if user.is_active:
+				if user.groups.filter(name='vezejas').exists() == True:
+					login(request, user)
+					return redirect('/pagrindinis/')
+				else:
+					login(request, user)
+					return redirect('/pagrindinis/')
+		
+				#context = {}
+				#template = loader.get_template('pagrindinis/index.html')
+				#return HttpResponse(template.render(context, request))
+		else:
+			template = loader.get_template('pagrindinis/index.html')
+			form = NaujasSiuntinys()
+			form_siunt_login = Prisijungimas_siuntejas()
+			left_menu = 'pagrindinis/left_menu.html'
+			vidurys = 'pagrindinis/vidurys_siunt_be_reg.html'
+			right_menu = 'pagrindinis/right_gidas.html'
+			pastaba = "Pastaba: neteisingas prisijungimo vardas arba slaptažodis"
+			context = {
+			'form': form,
+			'form_siunt_login': form_siunt_login,
+			'left_menu':left_menu,
+			'pastaba':pastaba,
+			'vidurys':vidurys,
+			'right_menu':right_menu
+			}
+			template = loader.get_template('pagrindinis/index.html')
+			#return HttpResponse(template.render(context, request))
+			return HttpResponse(template.render(context, request))

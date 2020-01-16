@@ -1,0 +1,43 @@
+#!/usr/bin/python
+# vim: set fileencoding=<utf-8> :
+
+from django import forms
+from .models import Miestai, Miestai_listas
+
+
+#to be switched in migrations
+#miestai_choice = [[]]
+miestai_choice = Miestai_listas()
+#miestai_choice = []
+
+
+
+
+class NaujasSiuntinys(forms.Form):
+
+	siuntinio_svoris = forms.FloatField(label='Siuntinio svoris', widget=forms.TextInput(attrs={'class' : 'naujas_siunt_class'}))
+	siuntinio_ilgis = forms.FloatField(label='Siuntinio ilgis', widget=forms.TextInput(attrs={'class' : 'naujas_siunt_class'}))
+	siuntinio_plotis = forms.FloatField(label='Siuntinio plotis', widget=forms.TextInput(attrs={'class' : 'naujas_siunt_class'}))
+	siuntinio_aukstis = forms.FloatField(label='Siuntinio aukstis', widget=forms.TextInput(attrs={'class' : 'naujas_siunt_class'}))
+	siuntinio_vieta = forms.ChoiceField(choices=miestai_choice)
+	siuntinio_tikslas = forms.ChoiceField(choices=miestai_choice)
+	siuntinio_apibudinimas = forms.CharField(label='Siuntinio apibudinimas', max_length=200, widget=forms.TextInput(attrs={'class' : 'naujas_siunt_class'}))
+	surinkimo_namo_numeris_ar_pav = forms.CharField(label='Siuntinio apibudinimas', max_length=100, widget=forms.TextInput(attrs={'class' : 'naujas_siunt_class'}))
+	surinkimo_gatves_pavadinimas = forms.CharField(label='Siuntinio apibudinimas', max_length=100, widget=forms.TextInput(attrs={'class' : 'naujas_siunt_class'}))
+	surinkimo_pasto_kodas = forms.CharField(label='Siuntinio apibudinimas', max_length=10, widget=forms.TextInput(attrs={'class' : 'naujas_siunt_class'}))
+	pristatymo_pasto_kodas = forms.CharField(label='Siuntinio apibudinimas', max_length=10, widget=forms.TextInput(attrs={'class' : 'naujas_siunt_class'}))
+	pristatymo_gatves_pavadinimas = forms.CharField(label='Siuntinio apibudinimas', max_length=100, widget=forms.TextInput(attrs={'class' : 'naujas_siunt_class'}))
+	pristatymo_namo_numeris_ar_pav = forms.CharField(label='Siuntinio apibudinimas', max_length=100, widget=forms.TextInput(attrs={'class' : 'naujas_siunt_class'}))
+	gavejo_tel_numeris = forms.CharField(label='Siuntinio apibudinimas', max_length=100, widget=forms.TextInput(attrs={'class' : 'naujas_siunt_class'}))
+	
+	
+	
+class Prisijungimas_siuntejas (forms.Form):
+	siuntejo_prisijungimo_vardas = forms.CharField(help_text='Prisijungimo vardas', label='Prisijungimo vardas', max_length=200, widget=forms.TextInput(attrs={'class' : 'prisijungimas_class'}))
+	siuntejo_slaptazodis = forms.CharField(label='Slaptažodis', max_length=200, widget=forms.PasswordInput(attrs={'class' : 'prisijungimas_class'}))
+	
+	
+class Zymejimas (forms.Form):
+	zymeklis = forms.BooleanField (required=False, label='', widget=forms.CheckboxInput())
+
+
